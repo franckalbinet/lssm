@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "lssm"
+  site-url: "https://franckalbinet.github.io/lssm"
+  description: "Modelling pipeline to develop and monitor Large Soil Spectral Models (LSSM)"
+  repo-branch: main
+  repo-url: "https://github.com/franckalbinet/lssm"
