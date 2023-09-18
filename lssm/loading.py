@@ -7,8 +7,10 @@ __all__ = ['load_ossl']
 from pathlib import Path
 from tqdm import tqdm
 from typing import Union, List
+import re
 
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 import warnings
@@ -35,6 +37,10 @@ def load_ossl(fname: Path,  # Path to OSSL gzipped csv dump
 
     ds_name_encoder = LabelEncoder()
     ds_name = ds_name_encoder.fit_transform(df['dataset.code_ascii_txt'])
+    
+    pattern = r"scan_{}\.(\d+)_".format(spectra_type)
+    X_names = np.array([int(re.search(pattern, name).group(1)) for name in df.columns 
+                        if re.search(pattern, name)])
 
-    return X, y, smp_idx, ds_name, ds_name_encoder.classes_
+    return X, y, X_names, smp_idx, ds_name, ds_name_encoder.classes_
 
