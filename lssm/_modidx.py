@@ -5,4 +5,4 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://franckalbinet.github.io',
                 'git_url': 'https://github.com/franckalbinet/lssm',
                 'lib_path': 'lssm'},
-  'syms': {'lssm.core': {'lssm.core.foo': ('core.html#foo', 'lssm/core.py')}}}
+  'syms': {'lssm.loading': {'lssm.loading.load_ossl': ('loading.html#load_ossl', 'lssm/loading.py')}, 'lssm.preprocessing': {}}}
