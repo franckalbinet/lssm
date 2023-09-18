@@ -20,7 +20,8 @@ analytes_default = 'k.ext_usda.a725_cmolc.kg'
 
 # %% ../nbs/00_loading.ipynb 5
 def load_ossl(fname:Path=fname_ossl, 
-              analytes:Union[str, List[str]]=analytes_default,
+            #   analytes:Union[str, List[str]]=analytes_default,
+              analytes:str|List[str]=analytes_default,
               spectra_type:str='visnir', # mir, visnir
               ):
     analytes = [analytes] if isinstance(analytes, str) else analytes 
