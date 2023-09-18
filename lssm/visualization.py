@@ -6,14 +6,12 @@ __all__ = ['plot_spectra']
 # %% ../nbs/01_visualization.ipynb 3
 from pathlib import Path
 
-from .loading import load_ossl
-
 import numpy as np
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# %% ../nbs/01_visualization.ipynb 4
+# %% ../nbs/01_visualization.ipynb 5
 def plot_spectra(X, X_names, sample=50, 
                  ascending=True,
                  alpha=0.8, color='#333', 

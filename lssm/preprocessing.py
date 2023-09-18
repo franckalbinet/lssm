@@ -6,18 +6,15 @@ __all__ = ['ToAbsorbance', 'ContinuumRemoval', 'SNV']
 # %% ../nbs/02_preprocessing.ipynb 3
 from pathlib import Path
 from tqdm import tqdm
-
-from .loading import load_ossl
-from .visualization import plot_spectra
+import fastcore.all as fc
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import Pipeline
 from scipy.spatial import ConvexHull
 from scipy.interpolate import interp1d
 
 
-# %% ../nbs/02_preprocessing.ipynb 5
+# %% ../nbs/02_preprocessing.ipynb 6
 class ToAbsorbance(BaseEstimator, TransformerMixin):
     """Transform Reflectance to Absorbance"""
     def __init__(self, eps=1e-5): self.eps = eps
@@ -26,12 +23,12 @@ class ToAbsorbance(BaseEstimator, TransformerMixin):
         X[X < 0] = 0
         return -np.log10(X + self.eps)
 
-# %% ../nbs/02_preprocessing.ipynb 9
+# %% ../nbs/02_preprocessing.ipynb 10
 class ContinuumRemoval(BaseEstimator, TransformerMixin):
     """Creates continnum removal custom transformer"""
 
     def __init__(self, wls):
-        self.wls = wls
+        fc.store_attr()
 
     def fit(self, X, y=None):
         return self
@@ -51,7 +48,7 @@ class ContinuumRemoval(BaseEstimator, TransformerMixin):
     
         return continuum_removed_spectra
 
-# %% ../nbs/02_preprocessing.ipynb 12
+# %% ../nbs/02_preprocessing.ipynb 13
 class SNV(BaseEstimator, TransformerMixin):
     """Creates scikit-learn SNV custom transformer"""
     def fit(self, X, y=None): return self
