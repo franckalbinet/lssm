@@ -11,17 +11,12 @@ import fastcore.all as fc
 
 from torch.utils.data import Dataset, DataLoader
 
-# import numpy as np
-# from sklearn.base import BaseEstimator, TransformerMixin
-# from sklearn.pipeline import Pipeline
-# from scipy.spatial import ConvexHull
-# from scipy.interpolate import interp1d
-
-
 # %% ../nbs/03_dataloaders.ipynb 5
-class SpectralDataset():
-    def __init__(self, X, y, metadata):
-        fc.store_attr()
+class SpectralDataset(Dataset):
+    def __init__(self, X, y, metadata=None):
+        self.X = X
+        self.y = y
+        self.metadata = metadata
         
     def __len__(self):
         return len(self.X)
