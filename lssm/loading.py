@@ -6,6 +6,7 @@ __all__ = ['fname_ossl', 'analytes_default', 'load_ossl']
 # %% ../nbs/00_loading.ipynb 3
 from pathlib import Path
 from tqdm import tqdm
+
 from typing import Union, List
 
 import pandas as pd
@@ -20,9 +21,8 @@ analytes_default = 'k.ext_usda.a725_cmolc.kg'
 
 # %% ../nbs/00_loading.ipynb 5
 def load_ossl(fname:Path=fname_ossl, 
-            #   analytes:Union[str, List[str]]=analytes_default,
-              analytes:str|List[str]=analytes_default,
-              spectra_type:str='visnir', # mir, visnir
+              analytes:Union[str, List[str]]=analytes_default, # using OSSL's analytes naming conventions
+              spectra_type:str='visnir', # possible values: 'mir', 'visnir'
               ):
     analytes = [analytes] if isinstance(analytes, str) else analytes 
     df = pd.read_csv(fname, compression='infer', low_memory=True)
