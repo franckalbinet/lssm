@@ -7,7 +7,6 @@ __all__ = ['plot_spectra']
 from pathlib import Path
 
 from .loading import load_ossl
-from .preprocessing import ToAbsorbance
 
 import numpy as np
 
