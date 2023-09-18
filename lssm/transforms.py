@@ -5,12 +5,8 @@ __all__ = ['GADFTfm']
 
 # %% ../nbs/04_transforms.ipynb 3
 from pathlib import Path
-from tqdm import tqdm
-from collections import namedtuple
-import fastcore.all as fc
 
 import torch
-from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms as T
 
 # %% ../nbs/04_transforms.ipynb 5
