@@ -6,6 +6,7 @@ __all__ = ['fname_ossl', 'analytes_default', 'load_ossl']
 # %% ../nbs/00_loading.ipynb 3
 from pathlib import Path
 from tqdm import tqdm
+from typing import Union, List
 
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
@@ -19,7 +20,7 @@ analytes_default = 'k.ext_usda.a725_cmolc.kg'
 
 # %% ../nbs/00_loading.ipynb 5
 def load_ossl(fname:Path=fname_ossl, 
-              analytes:str|list=analytes_default,
+              analytes:Union[str, List[str]]=analytes_default,
               spectra_type:str='visnir', # mir, visnir
               ):
     analytes = [analytes] if isinstance(analytes, str) else analytes 
