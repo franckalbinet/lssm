@@ -9,7 +9,7 @@ website:
           - 00_loading.ipynb
           - 01_visualization.ipynb
           - 02_preprocessing.ipynb
-          - 03_visualization.ipynb
+          - 03_dataloaders.ipynb
           - 04_transforms.ipynb
           - 05_learner.ipynb
           - 06_callbacks.ipynb
