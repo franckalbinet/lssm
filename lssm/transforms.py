@@ -37,13 +37,13 @@ class GADFTfm():
              torch.matmul(torch.transpose(X, 1, 2), K)).unsqueeze_(1)
         return x, y, *metadata
 
-# %% ../nbs/04_transforms.ipynb 10
+# %% ../nbs/04_transforms.ipynb 9
 def _resizeTfm(b, size=224):
     "Resize image"
     x, y, *metadata  = b
     return T.Resize(size)(x), y, *metadata
 
-# %% ../nbs/04_transforms.ipynb 12
+# %% ../nbs/04_transforms.ipynb 11
 class StatsTfm(): 
     """
     Set pre-trained statistics
