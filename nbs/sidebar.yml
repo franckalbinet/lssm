@@ -1,0 +1,17 @@
+website:
+  sidebar:
+    contents:
+      - section: "Paper with code"
+        contents:
+          - paper/visnir-kex.ipynb
+      - section: API
+        contents:
+          - 00_loading.ipynb
+          - 01_visualization.ipynb
+          - 02_preprocessing.ipynb
+          - 03_visualization.ipynb
+          - 04_transforms.ipynb
+          - 05_learner.ipynb
+          - 06_callbacks.ipynb
+          
+          
