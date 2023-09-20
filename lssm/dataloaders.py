@@ -9,7 +9,9 @@ from tqdm import tqdm
 from collections import namedtuple
 import fastcore.all as fc
 
+import torch
 from torch.utils.data import Dataset, DataLoader
+from torch import tensor
 
 # %% ../nbs/03_dataloaders.ipynb 5
 class SpectralDataset(Dataset):
@@ -22,7 +24,8 @@ class SpectralDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-        return self.X[idx,:][None,:], self.y[idx,:]
+        return (tensor(self.X[idx,:][None,:], dtype=torch.float32), 
+                tensor(self.y[idx,:], dtype=torch.float32))
 
 # %% ../nbs/03_dataloaders.ipynb 6
 def get_dls(train_ds, valid_ds, bs, **kwargs):
