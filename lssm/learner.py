@@ -11,6 +11,7 @@ import torch
 from torch import optim, nn
 import torch.nn.functional as F
 from torchvision import transforms as T
+from .callbacks import run_cbs
 
 # %% ../nbs/05_learner.ipynb 5
 def to_cpu(x):
