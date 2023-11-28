@@ -60,4 +60,4 @@ class SNV(BaseEstimator, TransformerMixin):
 class Log1p(BaseEstimator, TransformerMixin):
     """Creates scikit-learn `np.log1p` target custom transformer"""
     def fit(self, y, X=None): return self
-    def transform(self, y, yX=None): return np.log1p(y)
+    def transform(self, y, X=None): return np.log1p(y)

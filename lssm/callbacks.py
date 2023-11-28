@@ -2,14 +2,18 @@
 
 # %% auto 0
 __all__ = ['def_device', 'to_device', 'to_cpu', 'Callback', 'run_cbs', 'BaseSchedCB', 'BatchSchedCB', 'BatchTransformCB',
-           'DeviceCB', 'MetricsCB', 'ProgressCB', 'SingleBatchCB', 'TrainCB']
+           'DeviceCB', 'MetricsCB', 'ProgressCB', 'SingleBatchCB', 'TrainCB', 'CancelFitException',
+           'CancelBatchException', 'CancelEpochException', 'LRFinderCB']
 
 # %% ../nbs/06_callbacks.ipynb 3
 from copy import copy
+import math
 import fastcore.all as fc
 from fastprogress import progress_bar, master_bar
 from operator import attrgetter
 from collections.abc import Mapping
+
+import matplotlib.pyplot as plt
 
 import torch
 from torchvision import transforms as T
@@ -138,3 +142,34 @@ class TrainCB(Callback):
     def backward(self, learn): learn.loss.backward()
     def step(self, learn): learn.opt.step()
     def zero_grad(self, learn): learn.opt.zero_grad()
+
+# %% ../nbs/06_callbacks.ipynb 17
+from torch.optim.lr_scheduler import ExponentialLR
+
+# %% ../nbs/06_callbacks.ipynb 18
+class CancelFitException(Exception): pass
+class CancelBatchException(Exception): pass 
+class CancelEpochException(Exception): pass
+
+# %% ../nbs/06_callbacks.ipynb 19
+class LRFinderCB(Callback):
+    def __init__(self, gamma=1.3, max_mult=3): fc.store_attr()
+    
+    def before_fit(self, learn):
+        self.sched = ExponentialLR(learn.opt, self.gamma)
+        self.lrs,self.losses = [],[]
+        self.min = math.inf
+
+    def after_batch(self, learn):
+        if not learn.training: raise CancelEpochException()
+        self.lrs.append(learn.opt.param_groups[0]['lr'])
+        loss = to_cpu(learn.loss)
+        self.losses.append(loss)
+        if loss < self.min: self.min = loss
+        if math.isnan(loss) or (loss > self.min*self.max_mult):
+            raise CancelFitException()
+        self.sched.step()
+
+    def cleanup_fit(self, learn):
+        plt.plot(self.lrs, self.losses)
+        plt.xscale('log')

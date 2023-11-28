@@ -17,6 +17,7 @@ def plot_spectra(X, X_names, sample=50,
                  alpha=0.8, color='#333', 
                  xlabel='Wavenumber',
                  ylabel='Absorbance',
+                 title=None,
                  figsize=(20, 4)):
     sns.set_style("whitegrid")
     sns.despine()
@@ -32,7 +33,8 @@ def plot_spectra(X, X_names, sample=50,
     for i in range(X.shape[0]): 
         sns.lineplot(x=X_names, y=X[i,:], lw=1, c=color, alpha=alpha)
     
-    plt.locator_params(axis="x", nbins=20)    
+    plt.locator_params(axis="x", nbins=20)   
+    plt.title(title) 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel);
     

@@ -13,5 +13,6 @@ website:
           - 04_transforms.ipynb
           - 05_learner.ipynb
           - 06_callbacks.ipynb
+          - 07_models.ipynb
           
           
