@@ -11,6 +11,7 @@ website:
           - 02_preprocessing.ipynb
           - 03_dataloaders.ipynb
           - 04_transforms.ipynb
+          - 08_hooks.ipynb
           - 05_learner.ipynb
           - 06_callbacks.ipynb
           - 07_models.ipynb

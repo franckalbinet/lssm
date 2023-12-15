@@ -39,23 +39,28 @@ def to_cpu(x):
 class Callback(): order = 0
 
 # %% ../nbs/06_callbacks.ipynb 7
-def run_cbs(cbs, method_nm, learn=None):
+def run_cbs(
+    cbs:list, # Callbacks to run
+    method_nm:str, # Name of the method to call on all passed callbacks
+    learn=None # Contect object in which the callbacks might be used
+    ):
+    "Run callbacks in the order defined in their `order` class attribute."
     for cb in sorted(cbs, key=attrgetter('order')):
         method = getattr(cb, method_nm, None)
         if method is not None: method(learn)
 
-# %% ../nbs/06_callbacks.ipynb 8
+# %% ../nbs/06_callbacks.ipynb 12
 class BaseSchedCB(Callback):
     def __init__(self, sched): self.sched = sched
     def before_fit(self, learn): self.schedo = self.sched(learn.opt)
     def _step(self, learn):
         if learn.training: self.schedo.step()
 
-# %% ../nbs/06_callbacks.ipynb 9
+# %% ../nbs/06_callbacks.ipynb 13
 class BatchSchedCB(BaseSchedCB):
     def after_batch(self, learn): self._step(learn)
 
-# %% ../nbs/06_callbacks.ipynb 10
+# %% ../nbs/06_callbacks.ipynb 14
 class BatchTransformCB(Callback):
     def __init__(self, tfm, on_train=True, on_val=True): fc.store_attr()
 
@@ -63,15 +68,23 @@ class BatchTransformCB(Callback):
         if (self.on_train and learn.training) or (self.on_val and not learn.training):
             learn.batch = self.tfm(learn.batch)
 
-# %% ../nbs/06_callbacks.ipynb 11
+# %% ../nbs/06_callbacks.ipynb 15
 class DeviceCB(Callback):
-    def __init__(self, device=def_device): fc.store_attr()
-    def before_fit(self, learn):
-        if hasattr(learn.model, 'to'): learn.model.to(self.device)
-    def before_batch(self, learn): learn.batch = to_device(learn.batch, device=self.device)
+    "Put `model` (before_fit) or `batch` (before_batch) to `device`."
+    def __init__(self, 
+                 device:str=def_device, # 'cpu, 'mps', 'cuda', ...
+                 ): 
+        fc.store_attr()
+        
+    def before_fit(self, learn): 
+        if hasattr(learn.model, 'to'): 
+            learn.model.to(self.device)
+    def before_batch(self, learn): 
+        learn.batch = to_device(learn.batch, device=self.device)
 
-# %% ../nbs/06_callbacks.ipynb 12
+# %% ../nbs/06_callbacks.ipynb 16
 class MetricsCB(Callback):
+    "Metrics callback."
     def __init__(self, *ms, **metrics):
         for o in ms: metrics[type(o).__name__] = o
         self.metrics = metrics
@@ -84,7 +97,8 @@ class MetricsCB(Callback):
 
     def after_epoch(self, learn):
         log = {k:f'{v.compute():.3f}' for k,v in self.all_metrics.items()}
-        log['epoch'] = learn.epoch
+        # log['epoch'] = learn.epoch
+        log['epoch'] = str(learn.epoch)
         log['train'] = 'train' if learn.model.training else 'eval'
         self._log(log)
 
@@ -93,7 +107,7 @@ class MetricsCB(Callback):
         for m in self.metrics.values(): m.update(to_cpu(learn.preds), y)
         self.loss.update(to_cpu(learn.loss), weight=len(x))
 
-# %% ../nbs/06_callbacks.ipynb 13
+# %% ../nbs/06_callbacks.ipynb 28
 class ProgressCB(Callback):
     order = MetricsCB.order+1
     def __init__(self, plot=False): self.plot = plot
@@ -110,13 +124,17 @@ class ProgressCB(Callback):
             self.first = False
         self.mbar.write(list(d.values()), table=True)
 
-    def before_epoch(self, learn): learn.dl = progress_bar(learn.dl, leave=False, parent=self.mbar)
+    def before_epoch(self, learn): 
+        learn.dl = progress_bar(learn.dl, leave=False, parent=self.mbar)
+        
     def after_batch(self, learn):
         learn.dl.comment = f'{learn.loss:.3f}'
         if self.plot and hasattr(learn, 'metrics') and learn.training:
             self.losses.append(learn.loss.item())
-            if self.val_losses: self.mbar.update_graph([[fc.L.range(self.losses), self.losses],
-                                                        [fc.L.range(learn.epoch).map(lambda x: (x+1)*len(learn.dls.train)), self.val_losses]])
+            if self.val_losses: 
+                self.mbar.update_graph([[
+                    fc.L.range(self.losses), self.losses],
+                                        [fc.L.range(learn.epoch).map(lambda x: (x+1)*len(learn.dls.train)), self.val_losses]])
     
     def after_epoch(self, learn): 
         if not learn.training:
@@ -125,12 +143,12 @@ class ProgressCB(Callback):
                 self.mbar.update_graph([[fc.L.range(self.losses), self.losses],
                                         [fc.L.range(learn.epoch+1).map(lambda x: (x+1)*len(learn.dls.train)), self.val_losses]])
 
-# %% ../nbs/06_callbacks.ipynb 14
+# %% ../nbs/06_callbacks.ipynb 29
 class SingleBatchCB(Callback):
     order = 1
     def after_batch(self, learn): raise CancelFitException()
 
-# %% ../nbs/06_callbacks.ipynb 15
+# %% ../nbs/06_callbacks.ipynb 30
 class TrainCB(Callback):
     def __init__(self, n_inp=1): self.n_inp = n_inp
     def predict(self, learn): 
@@ -143,15 +161,15 @@ class TrainCB(Callback):
     def step(self, learn): learn.opt.step()
     def zero_grad(self, learn): learn.opt.zero_grad()
 
-# %% ../nbs/06_callbacks.ipynb 17
+# %% ../nbs/06_callbacks.ipynb 31
 from torch.optim.lr_scheduler import ExponentialLR
 
-# %% ../nbs/06_callbacks.ipynb 18
+# %% ../nbs/06_callbacks.ipynb 32
 class CancelFitException(Exception): pass
 class CancelBatchException(Exception): pass 
 class CancelEpochException(Exception): pass
 
-# %% ../nbs/06_callbacks.ipynb 19
+# %% ../nbs/06_callbacks.ipynb 33
 class LRFinderCB(Callback):
     def __init__(self, gamma=1.3, max_mult=3): fc.store_attr()
     

@@ -132,7 +132,8 @@ class Encoder(nn.Module):
                  norm:nn.Module=None, # Normalization layer type 
                  z_dim:int=2 # Latent space dimension
                  ):
-        super(Encoder, self).__init__()
+        # super(Encoder, self).__init__()
+        super().__init__()
         self.layers = [ResBlock(1, 8, stride=1, act=act, norm=norm)]
         self.layers += [ResBlock(nfs[i], nfs[i+1], act=act,
                                  norm=norm, stride=2) for i in range(len(nfs)-1)]
@@ -157,7 +158,8 @@ class Decoder(nn.Module):
                  norm:nn.Module=None, # Normalization layer type 
                  z_dim:int=2 # Latent space dimension
                  ):
-        super(Decoder, self).__init__()
+        # super(Decoder, self).__init__()
+        super().__init__()
         self.feat_len = 1 + in_shape//2**(len(nfs)-1)
         self.lin = nn.Linear(z_dim, nfs[0]*self.feat_len, bias=False)
         self.nfs = nfs
@@ -182,7 +184,8 @@ class CVAE(nn.Module):
                  z_dim:int=2, # Latent space dimension
                  nfs:tuple=(8, 16, 32, 64, 128, 256), # Successive output channels size
                  ):
-        super(CVAE, self).__init__()
+        # super(CVAE, self).__init__()
+        super().__init__()
         self.in_shape = in_shape
         self.encoder = Encoder(nfs=nfs, z_dim=z_dim)
         self.decoder = Decoder(in_shape, nfs=nfs[::-1], z_dim=z_dim)

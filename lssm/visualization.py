@@ -23,11 +23,15 @@ def plot_spectra(X, X_names, sample=50,
     sns.despine()
     
     plt.figure(figsize=figsize)
-    idx = np.random.randint(X.shape[0], size=sample)
-    X = X[idx,:]
     
+    if len(X.shape) > 1:
+        idx = np.random.randint(X.shape[0], size=sample)
+        X = X[idx,:]
+    else:
+        X = X.reshape(1, -1)
+        
     _min, _max = np.min(X_names), np.max(X_names)
-    _order = [_min, _max] if ascending else [_min, _max]
+    _order = [_min, _max] if ascending else [_max, _min]
     plt.xlim(*_order)
     
     for i in range(X.shape[0]): 

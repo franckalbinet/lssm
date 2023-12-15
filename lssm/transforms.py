@@ -7,9 +7,11 @@ __all__ = ['GADFTfm', 'StatsTfm', 'SNVTfm']
 from pathlib import Path
 
 import numpy as np
+import fastcore.all as fc
 
 import torch
 from torchvision import transforms as T
+
 
 # %% ../nbs/04_transforms.ipynb 5
 class GADFTfm(): 
@@ -61,7 +63,7 @@ class StatsTfm():
         x = (((x - means) / stds) * self.std) + self.mean
         return x, y, *metadata
 
-# %% ../nbs/04_transforms.ipynb 12
+# %% ../nbs/04_transforms.ipynb 16
 class SNVTfm(): 
     "Apply SNV to input or to both input and output when used with a Variational Auto-Encoder."
     def __init__(self, 
@@ -69,11 +71,21 @@ class SNVTfm():
                  ):
         self.is_VAE = is_VAE
 
+    def _apply_snv(self, data):
+        mean = torch.mean(data, axis=-1, keepdim=True)
+        std = torch.std(data, axis=-1, keepdim=True)
+        return (data - mean) / std
+    
     def __call__(self, b): 
-        x, y = b
-        spectra = [x] if self.is_VAE else [x, y]
-        spectra_tfm = []
-        for s in spectra:
-            mean, std = torch.mean(s, axis=1).reshape(-1, 1), torch.std(s, axis=1).reshape(-1, 1)
-            spectra_tfm.append((s - mean)/std)
-        return spectra_tfm
+        if fc.isinstance_str(b, 'tuple'):
+            x, y = b
+            if self.is_VAE:
+                b = torch.concat(b)
+                b = self._apply_snv(b)
+                bs = len(x)
+                return b[:bs], b[bs:]
+            else:
+                x = self._apply_snv(x)
+                return x, y
+        else:
+            return self._apply_snv(b)

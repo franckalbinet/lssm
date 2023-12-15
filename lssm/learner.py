@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['with_cbs', 'Learner', 'lr_find']
 
-# %% ../nbs/05_learner.ipynb 3
+# %% ../nbs/05_learner.ipynb 4
 from functools import partial
 
 import fastcore.all as fc
@@ -18,7 +18,11 @@ from .callbacks import (run_cbs, to_cpu, LRFinderCB,
 
 # %% ../nbs/05_learner.ipynb 6
 class with_cbs:
-    def __init__(self, nm): self.nm = nm
+    'Decorator calling "before_`nm`" and "after_`nm`" around the decorated method. Call "cleanup_`nm`" once done.'
+    def __init__(self, 
+                 nm:str # Name of the callback method to call
+                 ): 
+        self.nm = nm
     def __call__(self, f):
         def _f(o, *args, **kwargs):
             try:
@@ -31,7 +35,14 @@ class with_cbs:
 
 # %% ../nbs/05_learner.ipynb 7
 class Learner():
-    def __init__(self, model, dls=(0,), loss_func=F.mse_loss, lr=0.1, cbs=None, opt_func=optim.SGD):
+    def __init__(self,
+                 model, 
+                 dls=(0,),
+                 loss_func=F.mse_loss,
+                 lr=0.1,
+                 cbs=None,
+                 opt_func=optim.SGD
+                 ):
         cbs = fc.L(cbs)
         fc.store_attr()
 
@@ -77,6 +88,12 @@ class Learner():
         finally:
             for cb in cbs: self.cbs.remove(cb)
 
+    def get_preds(self, data):
+        self.model.train(False)
+        self.batch = data
+        self._one_batch()
+        return learn.preds
+        
     def __getattr__(self, name):
         if name in ('predict','get_loss','backward','step','zero_grad'): return partial(self.callback, name)
         raise AttributeError(name)
