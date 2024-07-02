@@ -104,10 +104,7 @@ class SpikeDiff(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return X[self.idx,:][:, 1, :] - X[self.idx,:][:, 0, :]
 
-# %% ../nbs/02_preprocessing.ipynb 19
-# SpikeDiff(names[mask_smp]).fit_transform(X[mask_smp,:])
-
-# %% ../nbs/02_preprocessing.ipynb 20
+# %% ../nbs/02_preprocessing.ipynb 17
 class TakeDerivative(BaseEstimator, TransformerMixin):
     """Creates scikit-learn derivation custom transformer
 
@@ -136,19 +133,19 @@ class TakeDerivative(BaseEstimator, TransformerMixin):
         return savgol_filter(X, self.window_length, self.polyorder, self.deriv)
      
 
-# %% ../nbs/02_preprocessing.ipynb 23
+# %% ../nbs/02_preprocessing.ipynb 20
 class MinScaler(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None): return self
     def transform(self, X, y=None):     
         return X - X.min(axis=1, keepdims=True)    
 
-# %% ../nbs/02_preprocessing.ipynb 25
+# %% ../nbs/02_preprocessing.ipynb 22
 class MeanCenter(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None): return self
     def transform(self, X, y=None):     
         return X - X.mean(axis=1, keepdims=True)    
 
-# %% ../nbs/02_preprocessing.ipynb 28
+# %% ../nbs/02_preprocessing.ipynb 25
 class BaselineALS(BaseEstimator, TransformerMixin):
     def __init__(self, lam = 1e5, p = 0.01, niter=10):
         fc.store_attr()
@@ -175,7 +172,7 @@ class BaselineALS(BaseEstimator, TransformerMixin):
     
         return corrected_spectra
 
-# %% ../nbs/02_preprocessing.ipynb 31
+# %% ../nbs/02_preprocessing.ipynb 28
 class SpikeMean(BaseEstimator, TransformerMixin):
     def __init__(self, names):
         fc.store_attr()
