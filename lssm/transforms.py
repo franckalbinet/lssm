@@ -63,7 +63,7 @@ class StatsTfm():
         x = (((x - means) / stds) * self.std) + self.mean
         return x, y, *metadata
 
-# %% ../nbs/04_transforms.ipynb 16
+# %% ../nbs/04_transforms.ipynb 12
 class SNVTfm(): 
     "Apply SNV to input or to both input and output when used with a Variational Auto-Encoder."
     def __init__(self, 

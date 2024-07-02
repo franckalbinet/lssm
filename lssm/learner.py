@@ -61,7 +61,7 @@ class Learner():
 
     @with_cbs('epoch')
     def _one_epoch(self):
-        for self.iter,self.batch in enumerate(self.dl):
+        for self.iter,self.batch in enumerate(self.dl): 
             self._one_batch()
 
     def one_epoch(self, training):

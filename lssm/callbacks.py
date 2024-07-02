@@ -107,7 +107,7 @@ class MetricsCB(Callback):
         for m in self.metrics.values(): m.update(to_cpu(learn.preds), y)
         self.loss.update(to_cpu(learn.loss), weight=len(x))
 
-# %% ../nbs/06_callbacks.ipynb 28
+# %% ../nbs/06_callbacks.ipynb 17
 class ProgressCB(Callback):
     order = MetricsCB.order+1
     def __init__(self, plot=False): self.plot = plot
@@ -143,12 +143,12 @@ class ProgressCB(Callback):
                 self.mbar.update_graph([[fc.L.range(self.losses), self.losses],
                                         [fc.L.range(learn.epoch+1).map(lambda x: (x+1)*len(learn.dls.train)), self.val_losses]])
 
-# %% ../nbs/06_callbacks.ipynb 29
+# %% ../nbs/06_callbacks.ipynb 18
 class SingleBatchCB(Callback):
     order = 1
     def after_batch(self, learn): raise CancelFitException()
 
-# %% ../nbs/06_callbacks.ipynb 30
+# %% ../nbs/06_callbacks.ipynb 19
 class TrainCB(Callback):
     def __init__(self, n_inp=1): self.n_inp = n_inp
     def predict(self, learn): 
@@ -161,15 +161,15 @@ class TrainCB(Callback):
     def step(self, learn): learn.opt.step()
     def zero_grad(self, learn): learn.opt.zero_grad()
 
-# %% ../nbs/06_callbacks.ipynb 31
+# %% ../nbs/06_callbacks.ipynb 20
 from torch.optim.lr_scheduler import ExponentialLR
 
-# %% ../nbs/06_callbacks.ipynb 32
+# %% ../nbs/06_callbacks.ipynb 21
 class CancelFitException(Exception): pass
 class CancelBatchException(Exception): pass 
 class CancelEpochException(Exception): pass
 
-# %% ../nbs/06_callbacks.ipynb 33
+# %% ../nbs/06_callbacks.ipynb 22
 class LRFinderCB(Callback):
     def __init__(self, gamma=1.3, max_mult=3): fc.store_attr()
     

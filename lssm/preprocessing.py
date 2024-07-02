@@ -10,16 +10,19 @@ from tqdm import tqdm
 import re
 
 import fastcore.all as fc
-import pandas as pd
+from fastcore.basics import patch
 
+import pandas as pd
 import numpy as np
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from scipy.spatial import ConvexHull
 from scipy.interpolate import interp1d
 from scipy.signal import savgol_filter
-
 from scipy.sparse import diags
 from scipy.sparse.linalg import spsolve
+
+import pywt
 
 # %% ../nbs/02_preprocessing.ipynb 6
 class ToAbsorbance(BaseEstimator, TransformerMixin):
@@ -102,6 +105,9 @@ class SpikeDiff(BaseEstimator, TransformerMixin):
     
     def transform(self, X):
         return X[self.idx,:][:, 1, :] - X[self.idx,:][:, 0, :]
+
+# %% ../nbs/02_preprocessing.ipynb 19
+# SpikeDiff(names[mask_smp]).fit_transform(X[mask_smp,:])
 
 # %% ../nbs/02_preprocessing.ipynb 20
 class TakeDerivative(BaseEstimator, TransformerMixin):
