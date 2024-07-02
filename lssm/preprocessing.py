@@ -22,8 +22,6 @@ from scipy.signal import savgol_filter
 from scipy.sparse import diags
 from scipy.sparse.linalg import spsolve
 
-import pywt
-
 # %% ../nbs/02_preprocessing.ipynb 6
 class ToAbsorbance(BaseEstimator, TransformerMixin):
     """Transform Reflectance to Absorbance"""
