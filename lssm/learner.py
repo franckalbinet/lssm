@@ -88,11 +88,17 @@ class Learner():
         finally:
             for cb in cbs: self.cbs.remove(cb)
 
-    def get_preds(self, data):
+    def _batch_preds(self, X):
+        X = torch.from_numpy(X).to(dtype=torch.float32).view(X.shape[0], 1, X.shape[-1])
+        y_placeholder = torch.empty((len(X), 1), dtype=torch.float32)
+        return [X, y_placeholder]
+
+    def get_preds(self, X, y_tfm_fn=None):
         self.model.train(False)
-        self.batch = data
+        self.batch = self._batch_preds(X)
         self._one_batch()
-        return learn.preds
+        y_hat = self.preds.detach().numpy()
+        return y_tfm_fn(y_hat) if y_tfm_fn else y_hat
         
     def __getattr__(self, name):
         if name in ('predict','get_loss','backward','step','zero_grad'): return partial(self.callback, name)

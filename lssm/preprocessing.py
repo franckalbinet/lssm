@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['ToAbsorbance', 'ContinuumRemoval', 'SNV', 'Log1p', 'SpikeDiff', 'TakeDerivative', 'MinScaler', 'MeanCenter',
-           'BaselineALS', 'SpikeMean']
+           'BaselineALS', 'Interpolate', 'SpikeMean']
 
 # %% ../nbs/02_preprocessing.ipynb 3
 from pathlib import Path
@@ -131,7 +131,6 @@ class TakeDerivative(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         return savgol_filter(X, self.window_length, self.polyorder, self.deriv)
-     
 
 # %% ../nbs/02_preprocessing.ipynb 20
 class MinScaler(BaseEstimator, TransformerMixin):
@@ -173,6 +172,24 @@ class BaselineALS(BaseEstimator, TransformerMixin):
         return corrected_spectra
 
 # %% ../nbs/02_preprocessing.ipynb 28
+class Interpolate(BaseEstimator, TransformerMixin):
+    "Interpolate data according to new indices"
+    def __init__(self, 
+                 old_indexes:np.ndarray, # Old wavenumbers or wavelength 
+                 new_indexes:np.ndarray, # New wavenumbers or wavelength 
+                 ):
+        fc.store_attr()
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X_new = np.empty([len(X), len(self.new_indexes)])
+        for i, x in enumerate(X):
+            X_new[i,:] = np.interp(self.new_indexes, self.old_indexes, x)
+        return X_new
+
+# %% ../nbs/02_preprocessing.ipynb 29
 class SpikeMean(BaseEstimator, TransformerMixin):
     def __init__(self, names):
         fc.store_attr()
